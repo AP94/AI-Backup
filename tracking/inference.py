@@ -309,23 +309,30 @@ class ParticleFilter(InferenceModule):
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
 
-	"""
+	emissionModel[distance] = P(e|X)
 
-#	if (noisyDistance == None):
-#		for pos, prob in self.beliefs:
-#			self.beliefs(pos) = prob*(P(ghost in cell | self.getJailPosition())		
+	newBeliefs = util.Counter()
 
-	particlePos = self.particles
+	if (noisyDistance == None):
+		for pos, prob in self.beliefs:
+			newBeliefs(pos) = prob*(P(ghost in cell | self.getJailPosition())
+
+	particlePos = gameState.particles
 
 	for pos, prob in self.beliefs:
-		self.beliefs(pos) = prob*(P(noisyDistance|util.manhattanDistance(pacmanPosition, pos))
+		newBeliefs(pos) = prob*emissionModel[util.manhattanDistance(pacmanPosition, pos)]
 		
 
 	# Check if the weight is 0
 	if (self.beliefs.totalCount == 0):        
 		particlePos = self.initializeUniformly(gameState)
+	
+	
+	gameState.particles = particlePos
 
-	"""
+
+
+	
     def elapseTime(self, gameState):
         """
         Update beliefs for a time step elapsing.
