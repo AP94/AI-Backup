@@ -61,7 +61,57 @@ class MiraClassifier:
         representing a vector of values.
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+	cErrors = util.Counter()
+	weightChanges = util.Counter()
+	for c in Cgrid:
+	    for iteration in range(self.max_iterations):
+                for i in range(len(trainingData)):
+                    vectors = util.Counter()
+		    datum = trainingData[i] # The current feature
+
+		    # Get the label with the max score
+		    for l in self.legalLabels:
+			# Score = dot product of the weight and the feature
+			vectors[l] = self.weights[l] * datum
+
+		    maxLabel = vectors.argMax()
+
+		    # If the label isn't right, compute the tau for this (c, f) and add the difference (tau*feature) to the total error for that c
+		    if (maxLabel != trainingLabels[i]):
+			tau = ((self.weights[trainingLabels[i]] - self.weights[maxLabel])*datum + 1.0) / (2.0*(datum * datum))
+			tau = min(c, tau)
+			cErrors[c] += tau
+	
+	# Get the c with the smallest amount of error
+	minError = float('inf')	    
+	for c in Cgrid:
+		if cErrors[c] < minError:
+			minError = cErrors[c]
+			minC = c
+		if cErrors[c] == minError:
+			if c < minC:
+				minC = c
+	
+	# Finally, update the weights based on this c
+	for iteration in range(self.max_iterations):
+                for i in range(len(trainingData)):
+                    vectors = util.Counter()
+		    datum = trainingData[i]
+
+		    for l in self.legalLabels:
+			vectors[l] = self.weights[l] * datum
+
+		    maxLabel = vectors.argMax()
+
+		    if (maxLabel != trainingLabels[i]):
+			tau = ((self.weights[trainingLabels[i]] - self.weights[maxLabel])*datum + 1.0) / (2.0*(datum * datum))
+			tau = min(minC, tau)
+			diff = util.Counter()
+			for x in datum:
+				diff[x] = datum[x] * tau
+			self.weights[maxLabel] -= diff
+			self.weights[trainingLabels[i]] += diff
+
 
     def classify(self, data ):
         """

@@ -93,6 +93,31 @@ class PerceptronClassifier:
         featuresWeights = []
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+	min = float('inf')
+	max = -1*float('inf')
+	for feature in self.features:
+		weight = self.weights[label][feature]
+		# build up the first 100, keeping track of the min and the max
+		if len(featuresWeights) < 100:
+			featuresWeights.append(feature)
+			if weight < min:
+				min = weight
+				minFeature = feature
+			if weight > max:
+				max = weight
+				maxFeature = feature
+		# only add it in if the weight is at least as big as the min
+		elif weight >= min:
+			if weight > max:
+				max = weight
+				maxFeature = feature
+			# drop the min and reassign it to the new lowest value
+			featuresWeights.remove(minFeature)
+			featuresWeights.append(feature)
+			min = float('inf')
+			for i in range(100):
+				if self.weights[label][featuresWeights[i]] <= min:
+					min = self.weights[label][featuresWeights[i]]
+					minFeature = featuresWeights[i]
 
         return featuresWeights
