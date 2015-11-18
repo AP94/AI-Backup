@@ -79,7 +79,6 @@ def enhancedFeatureExtractorDigit(datum):
 
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
-
     return features
 
 
